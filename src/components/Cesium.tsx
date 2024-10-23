@@ -157,12 +157,14 @@ export const Globes: React.FC = () => {
     setDroneSizer(value);
   };
 
+
+
   return (
     <div>
       <div style={{ position: "absolute", top: "10px", zIndex: 1000 }}>
         <div style={{ display: "flex", gap: "1rem" }}>
           <button onClick={() => setUavData([initialUavData])}>
-            stopInterval
+            show moon
           </button>
           <button onClick={() => showDroneFlight()}>Show Drone flight</button>
           <input type="range" min={1} max={30} onChange={droneRange} />
