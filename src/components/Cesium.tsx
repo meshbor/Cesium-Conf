@@ -83,6 +83,12 @@ const initialUavData: UavData = {
   trail: [Cartesian3.fromDegrees(-75.59777, 40.03883, 1000)],
 };
 
+const initialUavData2: UavData = {
+  id: "uav1",
+  position: Cartesian3.fromDegrees(-80.59777, 43.03883, 900),
+  trail: [Cartesian3.fromDegrees(-80.59777, 43.03883, 900)],
+};
+
 const position = Cartesian3.fromDegrees(-74.0707383, 40.7117244, 100);
 
 const terrainProvider = createWorldTerrainAsync();
@@ -92,7 +98,7 @@ export const Globes: React.FC = () => {
 
   const { viewer } = useCesium();
 
-  const [uavData, setUavData] = useState<UavData[]>([initialUavData]);
+  const [uavData, setUavData] = useState<UavData[]>([initialUavData, initialUavData2]);
   const [show2Gis, setshow2Gis] = useState(false);
   const [droneSize, setDroneSizer] = useState(15);
 
@@ -101,26 +107,26 @@ export const Globes: React.FC = () => {
 
   const viewerRef = useRef<CesiumComponentRef<CesiumViewer>>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setUavData((prevUavData) =>
-        prevUavData.map((uav) => {
-          const newPosition = Cartesian3.fromDegrees(
-            -75.59777 + Math.random() * 10,
-            40.03883 + Math.random() * 10,
-            1000 + Math.random() * 100
-          );
-          return {
-            ...uav,
-            position: newPosition,
-            trail: [...uav.trail, newPosition],
-          };
-        })
-      );
-    }, 5000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setUavData((prevUavData) =>
+  //       prevUavData.map((uav) => {
+  //         const newPosition = Cartesian3.fromDegrees(
+  //           -75.59777 + Math.random() * 10,
+  //           40.03883 + Math.random() * 10,
+  //           1000 + Math.random() * 100
+  //         );
+  //         return {
+  //           ...uav,
+  //           position: newPosition,
+  //           trail: [...uav.trail, newPosition],
+  //         };
+  //       })
+  //     );
+  //   }, 5000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const showDroneFlight = () => {
     if (viewerRef.current && baseAlt && baseLat && baseLon) {

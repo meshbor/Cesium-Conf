@@ -8,6 +8,8 @@ export const polygons = [
         Cartesian3.fromDegrees(-105.0, 40.0),
         Cartesian3.fromDegrees(-105.0, 35.0),
         Cartesian3.fromDegrees(-100.0, 35.0),
+        Cartesian3.fromDegrees(-120.0, 45.0),
+
       ],
       color: Color.RED.withAlpha(0.5),
     },
