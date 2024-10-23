@@ -1,0 +1,23 @@
+npx create-react-app . --template typescript
+
+npm install --save cesium resium
+npm install --save @craco/craco craco-cesium cesium resium
+
+"scripts": {
+    "start": "craco start start",
+    "build": "craco start build",
+    "test": "craco start test",
+    "eject": "craco start eject"
+  },
+
+
+  меньше текста, больше шрифт
+  разбить слайды
+
+  обернуть показываемый код в зеленую рамку
+
+  поменять ход слайдов
+
+  Добавить скрины 3д моделей 
+
+  С самолетами и домами

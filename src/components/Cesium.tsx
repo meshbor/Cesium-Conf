@@ -41,8 +41,6 @@ import { DroneData } from "../data/droneData";
 import Satellite from "./Satellites";
 import { polygons } from "../data/polygons";
 
-const API_KEY = "07f9fcabf008153346a199b278bdcef0";
-
 const getDronRoutes = (baseLat: number, baseLon: number, baseAlt: number) => {
   const res = Array.from({ length: 10 }, (_, i) => ({
     lat: baseLat + (i / 100) * Math.random(),
@@ -73,13 +71,6 @@ const droneFlights: DroneData[] = Array.from({ length: 30 }, (_, i) => {
   };
 });
 
-export const fetchWeatherData = async (lat: number, lon: number) => {
-  const response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`
-  );
-  return response.json();
-};
-
 type UavData = {
   id: string;
   position: Cartesian3;
@@ -97,11 +88,14 @@ const position = Cartesian3.fromDegrees(-74.0707383, 40.7117244, 100);
 const terrainProvider = createWorldTerrainAsync();
 
 export const Globes: React.FC = () => {
+  Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3MzkzYTExNC02YTE3LTRjYjktOWZkNC03NGIzZjRjZDEzMWIiLCJpZCI6MjI2NDUwLCJpYXQiOjE3MjUwMTA3MTN9.C3jblft8U3-aSjhsZTJvnjr9bB6Mi1gxv_iEhXqP_Ys";
+
   const { viewer } = useCesium();
-  Ion.defaultAccessToken =
-    "dsfsdf";
 
   const [uavData, setUavData] = useState<UavData[]>([initialUavData]);
+  const [show2Gis, setshow2Gis] = useState(false);
+  const [droneSize, setDroneSizer] = useState(15);
+
   const [droneFlightsData, setDroneFlightsData] =
     useState<DroneData[]>(droneFlights);
 
@@ -131,95 +125,30 @@ export const Globes: React.FC = () => {
   const showDroneFlight = () => {
     if (viewerRef.current && baseAlt && baseLat && baseLon) {
       const viewer = viewerRef.current.cesiumElement;
-      const height = viewer?.camera?.positionCartographic?.height || 0;
 
-      const cameraHeight = height > baseAlt ? baseAlt + 1000 : height;
+      const cameraHeight =  1000;
       const position = Cartesian3.fromDegrees(baseLon, baseLat, cameraHeight);
 
-      viewer?.camera.flyTo({
+      viewerRef.current.cesiumElement?.camera.flyTo({
         destination: position,
         orientation: {
-          heading: viewer.camera.heading, // сохранение текущего направления камеры
-          pitch: viewer.camera.pitch, // сохранение текущего наклона камеры
-          roll: viewer.camera.roll, // сохранение текущего наклона по оси Z
+          heading: viewerRef.current.cesiumElement.camera.heading, // сохранение текущего направления камеры
+          pitch: viewerRef.current.cesiumElement.camera.pitch, // сохранение текущего наклона камеры
+          roll: viewerRef.current.cesiumElement.camera.roll, // сохранение текущего наклона по оси Z
         },
         duration: 3.0, // продолжительность анимации в секундах
       });
     }
-
-    // viewerRef.current?.cesiumElement.
   };
-
-  const getChurch = async () => {
-    // viewerRef.current?.cesiumElement.ces
-    viewerRef.current?.cesiumElement?.camera.setView({
-      destination: Cartesian3.fromDegrees(
-        4401744.644145314,
-        225051.41078911052,
-        4595420.374784433
-      ),
-      // orientation: HeadingPitchRoll(
-      //   5.646733805039757,
-      //   -0.276607153839886,
-      //   6.281110875400085
-      // ),
-    });
-
-    // viewerRef.current?.cesiumElement?.container.terra;
-    // const tileset = await Cesium3DTileset.fromIonAssetId(16421);
-    // viewerRef.current?.cesiumElement?.scene.primitives.add(tileset);
-    // viewer?.scene.moon.show
-  };
-  const getModel = async () => {
-    // try {
-    //   const position = Cartesian3.fromDegrees(-123.0744619, 44.0503706, 5000);
-    //   viewerRef.current?.cesiumElement?.camera.setView({
-    //     destination: position,
-    //     // orientation: HeadingPitchRoll(
-    //     //   5.646733805039757,
-    //     //   -0.276607153839886,
-    //     //   6.281110875400085
-    //     // ),
-    //   });
-
-    //   const heading = CesiumMain.Math.toRadians(135);
-    //   const pitch = 0;
-    //   const roll = 0;
-    //   const hpr = new CesiumMain.HeadingPitchRoll(heading, pitch, roll);
-    //   const orientation = CesiumMain.Transforms.headingPitchRollQuaternion(
-    //     position,
-    //     hpr
-    //   );
-    //   const model = await Model.fromGltfAsync({
-    //     url: "../../public/assets/CesiumDrone.glb",
-    //   });
-
-    //   const entity = viewer?.entities.add({
-    //     name: "../../public/assets/CesiumDrone.glb",
-    //     position: position,
-    //     orientation: orientation,
-    //     model: {
-    //       uri: "../../public/assets/CesiumDrone.glb",
-    //       minimumPixelSize: 128,
-    //       maximumScale: 20000,
-    //     },
-    //   });
-    //   viewer?.scene.primitives.add(entity);
-      
-    // } catch (error) {
-    //   console.log(`Failed to load model. ${error}`);
-    // }
-    // Cesium3DTileset.
-  };
-
-  useEffect(() => {
-    // getChurch()
-  }, []);
 
   const droneRange = (e: BaseSyntheticEvent) => {
     const value = e.target.value || 1;
     const arr = JSON.parse(JSON.stringify(droneFlights)) as [];
     setDroneFlightsData(() => arr.slice(0, Number(value)));
+  };
+  const setDroneSize = (e: BaseSyntheticEvent) => {
+    const value = e.target.value || 15;
+    setDroneSizer(value);
   };
 
   return (
@@ -230,17 +159,22 @@ export const Globes: React.FC = () => {
             stopInterval
           </button>
           <button onClick={() => showDroneFlight()}>Show Drone flight</button>
-          <button onClick={() => getModel()}>Show Church</button>
           <input type="range" min={1} max={30} onChange={droneRange} />
+          <label htmlFor="">
+            <input type="range" min={15} max={150} onChange={setDroneSize} />
+          </label>
+
+          <button onClick={() => setshow2Gis(!show2Gis)}>
+            {!show2Gis ? "Show 2Gis" : "Not show 2gis"}
+          </button>
         </div>
       </div>
 
-      <Viewer ref={viewerRef} full terrainProvider={terrainProvider}>
-        {/* <Globe
-        // terrainProvider={}
-        // onImageryLayersUpdate={action("onImageryLayersUpdate")}
-        // onTerrainProviderChange={action("onTerrainProviderChange")}
-        /> */}
+      <Viewer
+        ref={viewerRef}
+        full
+        shouldAnimate
+      >
         {/* <Model
       url="Cesium_Air.glb"
       modelMatrix={modelMatrix}
@@ -249,9 +183,14 @@ export const Globes: React.FC = () => {
       // onReady={action("onReady")}
       // {...events}
     /> */}
-    <Entity position={position}>
-  <ModelGraphics uri="assets/CesiumDrone.glb" scale={0.2}  minimumPixelSize={15} runAnimations />
-</Entity>
+        <Entity position={position}>
+          <ModelGraphics
+            uri="assets/CesiumDrone.glb"
+            scale={0.2}
+            minimumPixelSize={15}
+            runAnimations
+          />
+        </Entity>
         {/* <Entity position={position} name="Tokyo">
           <PointGraphics pixelSize={10} />
           <EntityDescription>
@@ -260,15 +199,14 @@ export const Globes: React.FC = () => {
           </EntityDescription>
         </Entity> */}
 
-<Entity>
-  <WallGraphics
-    positions={Cartesian3.fromDegreesArrayHeights([
-      -100.0, 40.0, 0.0,
-      -105.0, 40.0, 100000.0
-    ])}
-    material={Color.RED.withAlpha(0.5)}
-  />
-</Entity>
+        <Entity>
+          <WallGraphics
+            positions={Cartesian3.fromDegreesArrayHeights([
+              -100.0, 40.0, 0.0, -105.0, 40.0, 100000.0,
+            ])}
+            material={Color.RED.withAlpha(0.5)}
+          />
+        </Entity>
         {uavData.map((uav) => (
           <Entity key={uav.id} position={uav.position}>
             <PolylineGraphics
@@ -278,9 +216,18 @@ export const Globes: React.FC = () => {
             />
           </Entity>
         ))}
-         <Entity key={uavData[uavData.length-1].id} position={uavData[uavData.length-1].position}>
-         <ModelGraphics uri="assets/Cesium_Air.glb" scale={0.2}  minimumPixelSize={55} runAnimations clampAnimations />
-          </Entity>
+        <Entity
+          key={uavData[uavData.length - 1].id}
+          position={uavData[uavData.length - 1].position}
+        >
+          <ModelGraphics
+            uri="assets/Cesium_Air.glb"
+            scale={0.2}
+            minimumPixelSize={55}
+            runAnimations
+            clampAnimations
+          />
+        </Entity>
         {droneFlightsData.map((drone) => (
           <Entity
             key={drone.id}
@@ -291,15 +238,21 @@ export const Globes: React.FC = () => {
               drone.position.alt
             )}
           >
-            <PointGraphics pixelSize={10} color={Color.RED} />
-            {/* <PolylineGraphics
+            {/* <PointGraphics pixelSize={10} color={Color.RED} /> */}
+            <PolylineGraphics
               positions={drone.route.map((point) =>
                 Cartesian3.fromDegrees(point.lon, point.lat, point.alt)
               )}
               width={2}
               material={Color.YELLOW}
-            /> */}
-            <ModelGraphics uri="assets/CesiumDrone.glb" scale={0.2}  minimumPixelSize={15} runAnimations />
+            />
+            <ModelGraphics
+              uri="assets/CesiumDrone.glb"
+              scale={0.2}
+              minimumPixelSize={droneSize}
+              runAnimations={true} // Включение всех анимаций, содержащихся в модели
+              clampAnimations={true} // Цикличное воспроизведение анимации
+            />
           </Entity>
         ))}
 
@@ -313,15 +266,17 @@ export const Globes: React.FC = () => {
           </Entity>
         ))}
         {/* интеграция с 2gis */}
-         <ImageryLayer
-        imageryProvider={
-         new UrlTemplateImageryProvider({
-            url: "https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1",
-            tilingScheme: new WebMercatorTilingScheme(),
-            maximumLevel: 18,  // Максимальный уровень масштабирования
-          })
-        }
-      />
+        {show2Gis && (
+          <ImageryLayer
+            imageryProvider={
+              new UrlTemplateImageryProvider({
+                url: "https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1",
+                tilingScheme: new WebMercatorTilingScheme(),
+                maximumLevel: 18, // Максимальный уровень масштабирования
+              })
+            }
+          />
+        )}
       </Viewer>
     </div>
   );
