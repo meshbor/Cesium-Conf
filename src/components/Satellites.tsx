@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { EllipseGraphics, Entity, ModelGraphics } from "resium";
 import { Cartesian3, Color, Math as CesiumMath } from "cesium";

@@ -2,7 +2,7 @@ import React from "react";
 
 import "./App.css";
 import { Globes } from "./components/Cesium";
-import { GlobeInitial } from "./components/CesiumInitial";
+// import { GlobeInitial } from "./components/CesiumInitial";
 
 function App() {
   return (
